@@ -1,89 +1,70 @@
-package org.example.edufypodcastservice.controller;
+package org.example.edufypodproducerservice.controller;
 
-import org.example.edufypodcastservice.dto.EpisodeDto;
-import org.example.edufypodcastservice.dto.GenreDto;
-import org.example.edufypodcastservice.dto.PodcastDto;
-import org.example.edufypodcastservice.entities.Episode;
-import org.example.edufypodcastservice.entities.Genre;
-import org.example.edufypodcastservice.entities.Podcast;
-import org.example.edufypodcastservice.services.EpisodeServiceImpl;
-import org.example.edufypodcastservice.services.GenreServiceImpl;
-import org.example.edufypodcastservice.services.PodcastServiceImpl;
+import org.example.edufypodproducerservice.dto.ProducerDto;
+import org.example.edufypodproducerservice.entities.Producer;
+import org.example.edufypodproducerservice.services.ProducerServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 
 @RestController
 @RequestMapping("/podcasts")
-public class AddEditDeleteController {
+public class ProducerController {
 
-    private final PodcastServiceImpl podcastService;
-    private final EpisodeServiceImpl episodeService;
-    private final GenreServiceImpl genreService;
+    private final ProducerServiceImpl producerService;
 
     @Autowired
-    public AddEditDeleteController(PodcastServiceImpl podcastService, EpisodeServiceImpl episodeService, GenreServiceImpl genreService) {
-        this.podcastService = podcastService;
-        this.episodeService = episodeService;
-        this.genreService = genreService;
+    public ProducerController(ProducerServiceImpl producerService) {
+        this.producerService = producerService;
     }
 
-
-
-    @PostMapping("/addpodcast")
-    public ResponseEntity<Podcast> addPodcast(@RequestBody PodcastDto podcastDto) {
-        return ResponseEntity.ok(podcastService.addPodcast(podcastDto));
+    @PostMapping("/addproducer")
+    public ResponseEntity<Producer> addProducer(@RequestBody ProducerDto producerDto) {
+        return ResponseEntity.ok(producerService.addProducer(producerDto));
     }
 
-
-    @PutMapping("/updatepodcast")
-    public ResponseEntity<Podcast> updatePodcast(@RequestBody PodcastDto podcastDto) {
-        return ResponseEntity.ok(podcastService.updatePodcast(podcastDto));
+    @PutMapping("/updateproducer")
+    public ResponseEntity<Producer> updateProducer(@RequestBody ProducerDto producerDto) {
+        return ResponseEntity.ok(producerService.updateProducer(producerDto));
     }
 
-
-    @DeleteMapping("/deletepodcast/{id}")
-    public ResponseEntity<String> deletePodcast(@PathVariable UUID id) {
-        return ResponseEntity.ok(podcastService.deletePodcast(id));
+    @DeleteMapping("/deleteproducer/{producerId}")
+    public ResponseEntity<String> deleteProducer(@PathVariable UUID producerId) {
+        return ResponseEntity.ok(producerService.deleteProducer(producerId));
     }
 
-
-    @PostMapping("/addepisode")
-    public ResponseEntity<Episode> addEpisode(@RequestBody EpisodeDto episodeDto) {
-        return ResponseEntity.ok(episodeService.addEpisode(episodeDto));
+    @GetMapping("/producerfull/{producerId}")
+    public ResponseEntity<ProducerDto> getFullProducer(@PathVariable UUID producerId) {
+        return ResponseEntity.ok(producerService.getProducer(producerId, true));
     }
 
-
-    @PutMapping("/updateepisode")
-    public ResponseEntity<Episode> updateEpisode(@RequestBody EpisodeDto episodeDto) {
-        return ResponseEntity.ok(episodeService.updateEpisode(episodeDto));
+    @GetMapping("/producerlimited/{producerId}")
+    public ResponseEntity<ProducerDto> getLimitedProducer(@PathVariable UUID producerId) {
+        return ResponseEntity.ok(producerService.getProducer(producerId, false));
     }
 
-
-    @DeleteMapping("/deleteepisode/{id}")
-    public ResponseEntity<String> deleteEpisode(@PathVariable UUID id) {
-        return ResponseEntity.ok(episodeService.deleteEpisode(id));
+    @GetMapping("/allproducersfull")
+    public ResponseEntity<List<ProducerDto>> getAllFullProducers(boolean full) {
+        return ResponseEntity.ok(producerService.getAllProducers(true));
     }
 
-
-    @PostMapping("/addgenre")
-    public ResponseEntity<Genre> addGenre(@RequestBody GenreDto genreDto) {
-        return ResponseEntity.ok(genreService.addGenre(genreDto));
+    @GetMapping("/allproducerslimited")
+    public ResponseEntity<List<ProducerDto>> getAllLimitedProducers() {
+        return ResponseEntity.ok(producerService.getAllProducers(false));
     }
 
-
-    @PutMapping("/updategenre")
-    public ResponseEntity<Genre> updateGenre(@RequestBody GenreDto genreDto) {
-        return ResponseEntity.ok(genreService.updateGenre(genreDto));
+    @GetMapping("/producerbypodcastfull/{podcastId}")
+    public ResponseEntity<ProducerDto> getFullProducerByPodcast(@PathVariable UUID podcastId) {
+        return ResponseEntity.ok(producerService.getProducerByPodcastId(podcastId, true));
     }
 
-
-    @DeleteMapping("/deletegenre/{id}")
-    public ResponseEntity<String> deleteGenre(@PathVariable UUID id) {
-        return ResponseEntity.ok(genreService.deleteGenre(id));
+    @GetMapping("/producerbypodcastlimited/{podcastId}")
+    public ResponseEntity<ProducerDto> getLimitedProducerByPodcast(@PathVariable UUID podcastId) {
+        return ResponseEntity.ok(producerService.getProducerByPodcastId(podcastId, false));
     }
 
 }

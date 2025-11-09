@@ -1,22 +1,19 @@
-package org.example.edufypodseasonservice.services;
+package org.example.edufypodproducerservice.services;
 
-
-import org.example.edufypodcastservice.dto.EpisodeDto;
-import org.example.edufypodcastservice.entities.Episode;
+import org.example.edufypodproducerservice.dto.ProducerDto;
+import org.example.edufypodproducerservice.entities.Producer;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface SeasonService {
+public interface ProducerService {
 
-    Episode addEpisode(EpisodeDto episodeDto);
-    Episode updateEpisode(EpisodeDto episodeDto);
-    String deleteEpisode(UUID episodeId);
-    EpisodeDto getEpisode(UUID episodeId);
-    List<EpisodeDto> getAllEpisodes();
-    List<EpisodeDto> getEpisodesByPodcastId(UUID podcastId);
+   Producer addProducer(ProducerDto producerDto);
+   Producer updateProducer(ProducerDto producerDto);
+   String deleteProducer(UUID producerId);
 
-
-
+   ProducerDto getProducer(UUID producerId, boolean full);
+   List<ProducerDto> getAllProducers(boolean full);
+   ProducerDto getProducerByPodcastId(UUID podcastId, boolean full);
 
 }

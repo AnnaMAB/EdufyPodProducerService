@@ -1,211 +1,186 @@
-package org.example.edufypodcastservice.services;
+package org.example.edufypodproducerservice.services;
+
 
 import jakarta.transaction.Transactional;
-import org.example.edufypodcastservice.dto.EpisodeDto;
-import org.example.edufypodcastservice.entities.Episode;
-import org.example.edufypodcastservice.entities.Podcast;
-import org.example.edufypodcastservice.mapper.EpisodeDtoConverter;
-import org.example.edufypodcastservice.repositories.EpisodeRepository;
-import org.example.edufypodcastservice.repositories.PodcastRepository;
+import org.example.edufypodproducerservice.dto.ProducerDto;
+import org.example.edufypodproducerservice.entities.Producer;
+import org.example.edufypodproducerservice.mapper.ProducerDtoConverter;
+import org.example.edufypodproducerservice.repositories.ProducerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 
 @Service
-public class EpisodeServiceImpl implements EpisodeService {
+public class ProducerServiceImpl implements ProducerService {
 
-    private final EpisodeRepository episodeRepository;
-    private final EpisodeDtoConverter episodeDtoConverter;
-    private final PodcastRepository podcastRepository;
+    private final ProducerRepository producerRepository;
+    private final ProducerDtoConverter producerDtoConverter;
 
     @Autowired
-    public EpisodeServiceImpl(EpisodeRepository episodeRepository, EpisodeDtoConverter episodeDtoConverter, PodcastRepository podcastRepository) {
-        this.episodeRepository = episodeRepository;
-        this.episodeDtoConverter = episodeDtoConverter;
-        this.podcastRepository = podcastRepository;
+    public ProducerServiceImpl(ProducerRepository producerRepository, ProducerDtoConverter producerDtoConverter) {
+        this.producerRepository = producerRepository;
+        this.producerDtoConverter = producerDtoConverter;
     }
 
     @Transactional
     @Override
-    public Episode addEpisode(EpisodeDto episodeDto) {
-        Episode episode = new Episode();
-        if (episodeDto.getTitle() == null || episodeDto.getTitle().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Title is required");
+    public Producer addProducer(ProducerDto producerDto) {
+        Producer producer = new Producer();
+        if (producerDto.getName() == null || producerDto.getName().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
         }
-        if (episodeDto.getUrl() == null || episodeDto.getUrl().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Url is required");
-        }
-        if (episodeDto.getDescription() == null || episodeDto.getDescription().isEmpty()) {
+        if (producerDto.getDescription() == null || producerDto.getDescription().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Description is required");
         }
-        if (episodeDto.getDurationSeconds() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duration is required");
+        if (producerDto.getImageUrl() != null && !producerDto.getImageUrl().isEmpty()) {
+            producer.setImageUrl(producerDto.getImageUrl());
         }
-        if (episodeDto.getPodcast() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId is required");
+        if (producerDto.getThumbnailUrl() != null && !producerDto.getThumbnailUrl().isEmpty()) {
+            producer.setThumbnailUrl(producerDto.getThumbnailUrl());
         }
-        if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().isEmpty()) {
-            episode.setThumbnailUrl(episodeDto.getThumbnailUrl());
+        if (producerDto.getPodcasts() != null && !producerDto.getPodcasts().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcasts can't be added from this endpoint");
         }
-        if (episodeDto.getImageUrl() != null && !episodeDto.getImageUrl().isEmpty()) {
-            episode.setImageUrl(episodeDto.getImageUrl());
-        }
-        if (episodeDto.getPodcastId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "PodcastId is required");
-        }
-        Podcast podcast = podcastRepository.findById(episodeDto.getPodcastId()).orElseThrow(() -> {
-            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
-            return new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    String.format("No podcast exists with id: %s.", episodeDto.getPodcast())
-            );
-        });
-        episode.setTitle(episodeDto.getTitle());
-        episode.setUrl(episodeDto.getUrl());
-        episode.setDescription(episodeDto.getDescription());
-        episode.setDurationSeconds(episodeDto.getDurationSeconds());
-        episode.setReleaseDate(LocalDate.now());
-        episode.setPodcast(podcast);
-        podcast.getEpisodes().add(episode);
-        return episodeRepository.save(episode);
+        producer.setName(producerDto.getName());
+        producer.setDescription(producerDto.getDescription());
+        producer.setPodcasts(producerDto.getPodcasts());
+        return producerRepository.save(producer);
     }
 
     @Transactional
     @Override
-    public Episode updateEpisode(EpisodeDto episodeDto) {
-        if(episodeDto.getId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Episode id is required");
+    public Producer updateProducer(ProducerDto producerDto) {
+        if(producerDto.getId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcast id is required");
         }
-        Episode episode = episodeRepository.findById(episodeDto.getId()).orElseThrow(() -> {
+        Producer producer = producerRepository.findById(producerDto.getId()).orElseThrow(() -> {
             //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    String.format("No episode exists with id: %s.", episodeDto.getId())
+                    String.format("No producer exists with id: %s.", producerDto.getId())
             );
         });
-
-        if (episodeDto.getTitle() != null && !episodeDto.getTitle().equals(episode.getTitle())) {
-            if(episodeDto.getTitle().isEmpty()) {
-               // F_LOG.warn("{} tried to update a workout with invalid title.", role);
+        if (producerDto.getName() != null && !producerDto.getName().equals(producerDto.getName())) {
+            if(producerDto.getName().isEmpty()) {
+                // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Title can not be left blank."
+                        "Name can not be left blank."
                 );
             }
-            episode.setTitle(episodeDto.getTitle());
+            producer.setName(producerDto.getName());
         }
-        if (episodeDto.getUrl() != null && !episodeDto.getUrl().equals(episode.getUrl())) {
-            if(episodeDto.getUrl().isEmpty()) {
-               // F_LOG.warn("{} tried to update a workout with invalid title.", role);
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Url can not be left blank."
-                );
-            }
-            episode.setUrl(episodeDto.getUrl());
-        }
-        if (episodeDto.getDescription() != null && !episodeDto.getDescription().equals(episode.getDescription())) {
-            if(episodeDto.getDescription().isEmpty()) {
-               // F_LOG.warn("{} tried to update a workout with invalid title.", role);
+        if (producerDto.getDescription() != null && !producerDto.getDescription().equals(producer.getDescription())) {
+            if(producerDto.getDescription().isEmpty()) {
+                // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "Description can not be left blank."
                 );
             }
-            episode.setDescription(episodeDto.getDescription());
+            producer.setDescription(producerDto.getDescription());
         }
-        if (episodeDto.getDurationSeconds() != null && !episodeDto.getDurationSeconds().equals(episode.getDurationSeconds())) {
-            episode.setDurationSeconds(episodeDto.getDurationSeconds());
+        if (producerDto.getImageUrl() != null && !producerDto.getImageUrl().equals(producer.getImageUrl())) {
+            producer.setImageUrl(producerDto.getImageUrl());
         }
-        if (episodeDto.getReleaseDate() != null && !episodeDto.getReleaseDate().equals(episode.getReleaseDate())) {
-            // F_LOG.warn("{} tried to update a workout with invalid title.", role);
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Release date can not be changed."
-            );
+        if (producerDto.getThumbnailUrl() != null && !producerDto.getThumbnailUrl().equals(producer.getThumbnailUrl())) {
+            producer.setThumbnailUrl(producerDto.getThumbnailUrl());
         }
-        if (episodeDto.getThumbnailUrl() != null && !episodeDto.getThumbnailUrl().equals(episode.getThumbnailUrl())) {
-            episode.setThumbnailUrl(episodeDto.getThumbnailUrl());
+        if (producerDto.getPodcasts() != null && !producerDto.getPodcasts().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcasts can't be added from this endpoint");
         }
-        if (episodeDto.getImageUrl() != null && !episodeDto.getImageUrl().equals(episode.getImageUrl())) {
-            episode.setImageUrl(episodeDto.getImageUrl());
-        }
-        if (episodeDto.getPodcastId() != null && !episodeDto.getPodcastId().equals(episode.getPodcast().getId())) {
-            episode.getPodcast().getEpisodes().remove(episode);
-            Podcast podcast = podcastRepository.findById(episodeDto.getPodcastId()).orElseThrow(() -> {
-                //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
-                return new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        String.format("No podcast exists with id: %s.", episodeDto.getPodcast())
-                );
-            });
-            episode.setPodcast(podcast);
-            podcast.getEpisodes().add(episode);
-        }
-        return episodeRepository.save(episode);
+        return producerRepository.save(producer);
     }
 
     @Transactional
     @Override
-    public String deleteEpisode(UUID episodeId) {
-        if (episodeId == null) {
+    public String deleteProducer(UUID producerId) {
+        if (producerId == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Id must be provided"
             );
         }
-        if (!episodeRepository.existsById(episodeId)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    String.format("No episode exists with id: %s.", episodeId)
-            );
-        }
-        episodeRepository.deleteById(episodeId);
-        return String.format("Episode with Id: %s has been successfully deleted.", episodeId);
-    }
-
-    @Override
-    public EpisodeDto getEpisode(UUID episodeId) {
-        if (episodeId == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Id must be provided"
-            );
-        }
-        Episode episode = episodeRepository.findById(episodeId).orElseThrow(() -> {
+        Producer producer = producerRepository.findById(producerId).orElseThrow(() -> {
             //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
             return new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    String.format("No episode exists with id: %s.", episodeId)
+                    String.format("No producer exists with id: %s.", producerId)
             );
         });
-        return episodeDtoConverter.convertToFullEpisodeDto(episode);
+        if (!producer.getPodcasts().isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    String.format("Producer can't be deleted while podcasts are still associated.")
+            );
+        }
+        producerRepository.deleteById(producerId);
+        return String.format("Producer with Id: %s have been successfully deleted.", producerId);
     }
 
     @Override
-    public List<EpisodeDto> getAllEpisodes() {
-        List<Episode> episodes = episodeRepository.findAll();
-        List<EpisodeDto> episodeDtos = new ArrayList<>();
-        for (Episode episode : episodes) {
-            episodeDtos.add(episodeDtoConverter.convertToFullEpisodeDto(episode));
+    public ProducerDto getProducer(UUID producerId, boolean full) {
+        if (producerId == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Id must be provided"
+            );
         }
-        return episodeDtos;
+        Producer producer = producerRepository.findById(producerId).orElseThrow(() -> {
+            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No producer exists with id: %s.", producerId)
+            );
+        });
+        if (full) {
+            return producerDtoConverter.producerFullDtoConvert(producer);
+        }else {
+            return producerDtoConverter.producerLimitedDtoConvert(producer);
+        }
     }
 
     @Override
-    public List<EpisodeDto> getEpisodesByPodcastId(UUID podcastId) {
-        List<Episode> episodes = episodeRepository.findAllByPodcast_Id(podcastId);
-        List<EpisodeDto> episodeDtos = new ArrayList<>();
-        for (Episode episode : episodes) {
-            episodeDtos.add(episodeDtoConverter.convertToLimitedEpisodeDto(episode));
+    public List<ProducerDto> getAllProducers(boolean full) {
+        List<Producer> producers = producerRepository.findAll();
+        List<ProducerDto> producerDtos = new ArrayList<>();
+        if (full) {
+            for (Producer producer : producers) {
+                producerDtos.add(producerDtoConverter.producerFullDtoConvert(producer));
+            }
+        }else{
+            for (Producer producer : producers) {
+                producerDtos.add(producerDtoConverter.producerLimitedDtoConvert(producer));
+            }
         }
-        return episodeDtos;
+        return producerDtos;
+    }
+
+    @Override
+    public ProducerDto getProducerByPodcastId(UUID podcastId, boolean full) {
+        if (podcastId == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "PodcastId must be provided"
+            );
+        }
+        Producer producer = producerRepository.findByPodcastsContaining(podcastId).orElseThrow(() -> {
+            //   F_LOG.warn("{} tried to book a workout with id {} that doesn't exist.", role, workoutToBook.getId());
+            return new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("No producer exists for podcast with id: %s.", podcastId)
+            );
+        });
+        if (full) {
+            return producerDtoConverter.producerFullDtoConvert(producer);
+        }else {
+            return producerDtoConverter.producerLimitedDtoConvert(producer);
+        }
     }
 }
