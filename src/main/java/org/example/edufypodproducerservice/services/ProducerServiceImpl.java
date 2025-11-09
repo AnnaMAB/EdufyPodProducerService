@@ -32,16 +32,16 @@ public class ProducerServiceImpl implements ProducerService {
     @Override
     public Producer addProducer(ProducerDto producerDto) {
         Producer producer = new Producer();
-        if (producerDto.getName() == null || producerDto.getName().isEmpty()) {
+        if (producerDto.getName() == null || producerDto.getName().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
         }
-        if (producerDto.getDescription() == null || producerDto.getDescription().isEmpty()) {
+        if (producerDto.getDescription() == null || producerDto.getDescription().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Description is required");
         }
-        if (producerDto.getImageUrl() != null && !producerDto.getImageUrl().isEmpty()) {
+        if (producerDto.getImageUrl() != null && !producerDto.getImageUrl().isBlank()) {
             producer.setImageUrl(producerDto.getImageUrl());
         }
-        if (producerDto.getThumbnailUrl() != null && !producerDto.getThumbnailUrl().isEmpty()) {
+        if (producerDto.getThumbnailUrl() != null && !producerDto.getThumbnailUrl().isBlank()) {
             producer.setThumbnailUrl(producerDto.getThumbnailUrl());
         }
         if (producerDto.getPodcasts() != null && !producerDto.getPodcasts().isEmpty()) {
@@ -67,7 +67,7 @@ public class ProducerServiceImpl implements ProducerService {
             );
         });
         if (producerDto.getName() != null && !producerDto.getName().equals(producerDto.getName())) {
-            if(producerDto.getName().isEmpty()) {
+            if(producerDto.getName().isBlank()) {
                 // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
@@ -77,7 +77,7 @@ public class ProducerServiceImpl implements ProducerService {
             producer.setName(producerDto.getName());
         }
         if (producerDto.getDescription() != null && !producerDto.getDescription().equals(producer.getDescription())) {
-            if(producerDto.getDescription().isEmpty()) {
+            if(producerDto.getDescription().isBlank()) {
                 // F_LOG.warn("{} tried to update a workout with invalid title.", role);
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
