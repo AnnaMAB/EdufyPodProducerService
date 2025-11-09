@@ -19,9 +19,11 @@ public class Producer {
     private UUID id;
     @Column(length = 50, nullable = false)
     private String name;
-    @Column(length = 500, nullable = false)
+    @Column(length = 500, nullable = true)
     private String description;
+    @Column(length = 500, nullable = true)
     private String thumbnailUrl;
+    @Column(length = 500, nullable = true)
     private String imageUrl;
     @ElementCollection
     @CollectionTable(name = "producer_podcast_ids", joinColumns = @JoinColumn(name = "producer_id"))
