@@ -183,4 +183,50 @@ public class ProducerServiceImpl implements ProducerService {
             return producerDtoConverter.producerLimitedDtoConvert(producer);
         }
     }
+
+    @Override
+    public ProducerDto addPodcastToProducer(UUID producerId, UUID podcastId) {
+        if (producerId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producer ID must be provided");
+        }
+        if (podcastId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcast ID must be provided");
+        }
+        Producer producer = producerRepository.findById(producerId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        String.format("No producer exists with ID: %s", producerId)));
+        List<UUID> podcasts = producer.getPodcasts();
+        if (podcasts.contains(podcastId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    String.format("Podcast %s already exists for producer %s", podcastId, producerId));
+        }
+        podcasts.add(podcastId);
+        producer.setPodcasts(podcasts);
+        Producer saved = producerRepository.save(producer);
+
+        return producerDtoConverter.producerFullDtoConvert(saved);
+    }
+
+    @Override
+    public ProducerDto removePodcastFromProducer(UUID producerId, UUID podcastId) {
+        if (producerId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Producer ID must be provided");
+        }
+        if (podcastId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcast ID must be provided");
+        }
+        Producer producer = producerRepository.findById(producerId).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        String.format("No producer exists with ID: %s", producerId)));
+        List<UUID> podcasts = producer.getPodcasts();
+        if (!podcasts.contains(podcastId)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    String.format("Podcast %s dosen't exists for producer %s", podcastId, producerId));
+        }
+        podcasts.remove(podcastId);
+        producer.setPodcasts(podcasts);
+        Producer saved = producerRepository.save(producer);
+
+        return producerDtoConverter.producerFullDtoConvert(saved);
+    }
 }

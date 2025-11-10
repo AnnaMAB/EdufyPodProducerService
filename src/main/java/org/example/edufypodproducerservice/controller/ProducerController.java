@@ -67,4 +67,14 @@ public class ProducerController {
         return ResponseEntity.ok(producerService.getProducerByPodcastId(podcastId, false));
     }
 
+    @PostMapping("/{ProducerId}/addepisodes/{PodcastId}")
+    public ResponseEntity<ProducerDto> addOneEpisodeToSeason(@PathVariable UUID ProducerId,@PathVariable UUID PodcastId) {
+        return ResponseEntity.ok(producerService.addPodcastToProducer(ProducerId, PodcastId));
+    }
+
+    @DeleteMapping("/{ProducerId}/removeepisodes/{episodeId}")
+    public ResponseEntity<ProducerDto> removeOneEpisodeFromSeason(@PathVariable UUID ProducerId, @PathVariable UUID PodcastId) {
+        return ResponseEntity.ok(producerService.removePodcastFromProducer(ProducerId, PodcastId));
+    }
+
 }
