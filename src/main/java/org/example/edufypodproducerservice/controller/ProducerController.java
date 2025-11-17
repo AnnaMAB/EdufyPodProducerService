@@ -12,7 +12,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/podcasts")
+@RequestMapping("/podcasts/producers")
 public class ProducerController {
 
     private final ProducerServiceImpl producerService;
@@ -67,14 +67,20 @@ public class ProducerController {
         return ResponseEntity.ok(producerService.getProducerByPodcastId(podcastId, false));
     }
 
-    @PostMapping("/{ProducerId}/addepisodes/{PodcastId}")
-    public ResponseEntity<ProducerDto> addOneEpisodeToSeason(@PathVariable UUID ProducerId,@PathVariable UUID PodcastId) {
-        return ResponseEntity.ok(producerService.addPodcastToProducer(ProducerId, PodcastId));
+    @PostMapping("/{producerId}/addpodcast/{podcastId}")
+    public ResponseEntity<ProducerDto> addPodcastToProducer(@PathVariable UUID producerId,@PathVariable UUID podcastId) {
+        return ResponseEntity.ok(producerService.addPodcastToProducer(producerId, podcastId));
     }
 
-    @DeleteMapping("/{ProducerId}/removeepisodes/{podcastId}")
-    public ResponseEntity<ProducerDto> removeOneEpisodeFromSeason(@PathVariable UUID ProducerId, @PathVariable UUID PodcastId) {
-        return ResponseEntity.ok(producerService.removePodcastFromProducer(ProducerId, PodcastId));
+    @DeleteMapping("/{producerId}/removepodcast/{podcastId}")
+    public ResponseEntity<ProducerDto> removePodcastFromProducer(@PathVariable UUID producerId, @PathVariable UUID podcastId) {
+        return ResponseEntity.ok(producerService.removePodcastFromProducer(producerId, podcastId));
     }
+
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<Boolean> podcastExists(@PathVariable UUID id) {
+        return ResponseEntity.ok(producerService.producerExist(id));
+    }
+
 
 }
