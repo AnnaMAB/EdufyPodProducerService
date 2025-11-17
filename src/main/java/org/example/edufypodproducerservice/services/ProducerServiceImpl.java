@@ -251,4 +251,5 @@ public class ProducerServiceImpl implements ProducerService {
     public Boolean producerExist(UUID producerId) {
         return producerRepository.existsById(producerId);
     }
+
 }
