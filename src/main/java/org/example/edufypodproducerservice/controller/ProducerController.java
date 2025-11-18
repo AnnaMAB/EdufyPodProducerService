@@ -12,7 +12,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/podcasts/producers")
+@RequestMapping("/pods/producers")
 public class ProducerController {
 
     private final ProducerServiceImpl producerService;
@@ -67,13 +67,13 @@ public class ProducerController {
         return ResponseEntity.ok(producerService.getProducerByPodcastId(podcastId, false));
     }
 
-    @PostMapping("/{producerId}/addpodcast/{podcastId}")
+    @PutMapping("/{producerId}/addpodcast/{podcastId}")
     public ResponseEntity<ProducerDto> addPodcastToProducer(@PathVariable UUID producerId,@PathVariable UUID podcastId) {
         return ResponseEntity.ok(producerService.addPodcastToProducer(producerId, podcastId));
     }
 
-    @DeleteMapping("/{producerId}/removepodcast/{podcastId}")
-    public ResponseEntity<ProducerDto> removePodcastFromProducer(@PathVariable UUID producerId, @PathVariable UUID podcastId) {
+    @PutMapping("/{producerId}/removepodcast/{podcastId}")
+    public ResponseEntity<Boolean> removePodcastFromProducer(@PathVariable UUID producerId, @PathVariable UUID podcastId) {
         return ResponseEntity.ok(producerService.removePodcastFromProducer(producerId, podcastId));
     }
 

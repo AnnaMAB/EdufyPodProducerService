@@ -3,7 +3,6 @@ package org.example.edufypodproducerservice.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +14,7 @@ public class ProducerDto {
     private String description;
     private String thumbnailUrl;
     private String imageUrl;
-    private List<UUID> podcasts = new ArrayList<>();
+    private List<UUID> podcasts;
 
     public ProducerDto() {
     }

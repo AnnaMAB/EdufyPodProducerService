@@ -5,6 +5,7 @@ import org.example.edufypodproducerservice.dto.ProducerDto;
 import org.example.edufypodproducerservice.entities.Producer;
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class ProducerDtoConverter {
 
@@ -15,6 +16,7 @@ public class ProducerDtoConverter {
         producerDto.setDescription(producer.getDescription());
         producerDto.setImageUrl(producer.getImageUrl());
         producerDto.setThumbnailUrl(producer.getThumbnailUrl());
+        System.out.println(producer.getPodcasts());
         producerDto.setPodcasts(producer.getPodcasts());
 
         return producerDto;

@@ -17,7 +17,7 @@ public interface ProducerService {
    ProducerDto getProducerByPodcastId(UUID podcastId, boolean full);
 
    ProducerDto addPodcastToProducer(UUID producerId, UUID podcastId);
-   ProducerDto removePodcastFromProducer(UUID producerId, UUID podcastId);
+   Boolean removePodcastFromProducer(UUID producerId, UUID podcastId);
    Boolean producerExist(UUID producerId);
 
 }
