@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.TestPropertySource;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +14,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+@TestPropertySource(properties = {"spring.sql.init.mode=never"})
 @DataJpaTest
 class ProducerRepositoryTest {
 
@@ -23,6 +26,7 @@ class ProducerRepositoryTest {
     UUID podcastId1 = UUID.fromString("00000000-0000-0000-0000-000000000001");
     UUID podcastId2 = UUID.fromString("00000000-0000-0000-0000-000000000002");
     UUID podcastId3 = UUID.fromString("00000000-0000-0000-0000-000000000003");
+    UUID podcastId4 = UUID.fromString("00000000-0000-0000-0000-000000000004");
 
     @BeforeEach
     void setUp() {
@@ -49,4 +53,29 @@ class ProducerRepositoryTest {
         assertThat(pOne.get().getPodcasts().size()).isEqualTo(2);
         assertThat(pOne.get().getPodcasts().contains(podcastId1));
     }
+
+    @Test
+    void testFindByPodcastsNotContaining() {
+        Optional<Producer> pOne = producerRepository.findByPodcastsContaining(podcastId4);
+
+        assertThat(pOne).isNotPresent();
+    }
+
+
+    @Test
+    void testFindByName() {
+        Optional<Producer> result = producerRepository.findByName("Producer One");
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getName()).isEqualTo("Producer One");
+    }
+
+    @Test
+    void testFindByName_NotFound() {
+        Optional<Producer> result = producerRepository.findByName("Unknown Producer");
+
+        assertThat(result).isNotPresent();
+    }
+
+
 }

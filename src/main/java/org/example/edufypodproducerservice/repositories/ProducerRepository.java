@@ -10,5 +10,6 @@ import java.util.UUID;
 @Repository
 public interface ProducerRepository extends JpaRepository<Producer, UUID> {
     Optional<Producer> findByPodcastsContaining(UUID podcast);
+    Optional<Producer> findByName(String name);
 
 }

@@ -17,7 +17,7 @@ public class Producer {
     @Column(name = "Producer_id", columnDefinition = "char(36)")
     @JdbcTypeCode(SqlTypes.CHAR)
     private UUID id;
-    @Column(length = 50, nullable = false)
+    @Column(length = 50, nullable = false, unique = true)
     private String name;
     @Column(length = 500, nullable = true)
     private String description;

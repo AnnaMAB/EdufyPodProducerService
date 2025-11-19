@@ -39,14 +39,21 @@ public class ProducerServiceImpl implements ProducerService {
         if (producerDto.getName() == null || producerDto.getName().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required");
         }
+        if(producerRepository.findByName(producerDto.getName()).isPresent()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A producer with that name already exists");
+        }
         if (producerDto.getDescription() == null || producerDto.getDescription().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Description is required");
         }
         if (producerDto.getImageUrl() != null && !producerDto.getImageUrl().isBlank()) {
             producer.setImageUrl(producerDto.getImageUrl());
+        }else {
+            producer.setImageUrl("https://default/image.url");
         }
         if (producerDto.getThumbnailUrl() != null && !producerDto.getThumbnailUrl().isBlank()) {
             producer.setThumbnailUrl(producerDto.getThumbnailUrl());
+        }else {
+            producer.setThumbnailUrl("https://default/thumbnail.url");
         }
         if (producerDto.getPodcasts() != null && !producerDto.getPodcasts().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcasts can't be added from this endpoint");
@@ -76,6 +83,9 @@ public class ProducerServiceImpl implements ProducerService {
                         HttpStatus.BAD_REQUEST,
                         "Name can not be left blank."
                 );
+            }
+            if(producerRepository.findByName(producerDto.getName()).isPresent()){
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "A producer with that name already exists");
             }
             producer.setName(producerDto.getName());
         }
