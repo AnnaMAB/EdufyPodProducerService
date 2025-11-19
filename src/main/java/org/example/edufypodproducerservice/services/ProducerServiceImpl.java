@@ -221,6 +221,7 @@ public class ProducerServiceImpl implements ProducerService {
         return producerDtoConverter.producerFullDtoConvert(saved);
     }
 
+    @Transactional
     @Override
     public Boolean removePodcastFromProducer(UUID producerId, UUID podcastId) {
         if (producerId == null) {
@@ -232,11 +233,8 @@ public class ProducerServiceImpl implements ProducerService {
         Producer producer = producerRepository.findById(producerId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,
                         String.format("No producer exists with ID: %s", producerId)));
-        List<UUID> podcasts = producer.getPodcasts();
-        if (!podcasts.contains(podcastId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    String.format("Podcast %s dosen't exists for producer %s", podcastId, producerId));
-        }
+
+        List<UUID> podcasts = new ArrayList<>(producer.getPodcasts());
         podcasts.remove(podcastId);
         producer.setPodcasts(podcasts);
         producerRepository.save(producer);
