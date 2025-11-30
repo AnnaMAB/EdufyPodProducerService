@@ -73,8 +73,9 @@ public class ProducerServiceImpl implements ProducerService {
         producer.setName(producerDto.getName());
         producer.setDescription(producerDto.getDescription());
 
-        F_LOG.info("{} added a producer with id {}.", role, producer.getId());
-        return producerRepository.save(producer);
+        Producer savedProducer = producerRepository.save(producer);
+        F_LOG.info("{} added a producer with id {}.", role, savedProducer.getId());
+        return savedProducer;
     }
 
     @Transactional
@@ -164,7 +165,7 @@ public class ProducerServiceImpl implements ProducerService {
         }
 
         producerRepository.deleteById(producerId);
-        F_LOG.info("{} deleted producer with id:", role, producerId);
+        F_LOG.info("{} deleted producer with id: {}", role, producerId);
         return String.format("Producer with Id: %s have been successfully deleted.", producerId);
     }
 
@@ -245,7 +246,6 @@ public class ProducerServiceImpl implements ProducerService {
             F_LOG.warn("{} tried to add a podcast without providing podcastId.", role);
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Podcast ID must be provided");
         }
-        System.out.println(podcastId);
         Producer producer = producerRepository.findById(producerId).orElseThrow(() -> {
             F_LOG.warn("{} tried to retrieve a producer with id {} that doesn't exist.", role, producerId);
             return new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -266,7 +266,7 @@ public class ProducerServiceImpl implements ProducerService {
         producer.setPodcasts(podcasts);
         Producer saved = producerRepository.save(producer);
 
-        F_LOG.info("{} added an podcast to producer with {}.", role, producerId);
+        F_LOG.info("{} added a podcast to producer with id {}.", role, producerId);
         return producerDtoConverter.producerFullDtoConvert(saved);
     }
 
